@@ -11,6 +11,11 @@ import solver.GreedySolver;
 
 import java.io.*;
 
+/** Example testing class, identical to TestSCPSoln except for classes used.
+ * 
+ * @author ssanner@mie.utoronto.ca
+ *
+ */
 public class TestSCP {
 	
 	public static BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));

@@ -1,6 +1,8 @@
 package solver;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import model.SCPModel;
+import util.ElementSet;
 
 /** This is the main method that all solvers inherit from.  It is important
  *  to note how this solver calls nextBestSet() polymorphically!  Subclasses
@@ -20,7 +22,10 @@ public abstract class GreedySolver {
 	protected double _objFn;          // objective function value (*total cost sum* of all sets used)
 	protected double _coverage;       // actual coverage fraction achieved
 	protected long _compTime;         // computation time (ms)
-	
+        protected TreeSet<ElementSet> _solnSets;     // Set that stores all the sets that have already been used
+        protected TreeSet<Integer> _elementsUncovered; //Set the stores all the integers that are still uncovered
+        protected SCPModel _modelCopy;  //Make a copy of the model and use this to keep track of what sets have already been used
+        
 	// Basic setter (only one needed)
 	public void setMinCoverage(double alpha) { _alpha = alpha; }
 	public void setModel(SCPModel model) { _model = model; }
@@ -33,32 +38,77 @@ public abstract class GreedySolver {
 	public String getName() { return _name; }
 		
 	// TODO: Add any helper methods you need
+        public void reset(){
+            _objFn = 0.0;
+            _coverage = 0.0;
+            _compTime = 0;
+        } 
+        
+        public double computeCoverage(){
+            double temp = 0;
+            TreeSet<Integer> temp1 = new TreeSet<>();
+            //add up all the coverage of the solution sets and return the number as a fraction 
+            for (ElementSet i : _solnSets)
+                for (int j: i.getElements())
+                    temp1.add(j);
+            temp = (double)((double)temp1.size())/(double)(this._model.getNumElements());
+            return temp;
+        }
+        
+        public double computeCost(){
+            double temp = 0.0;
+            //TreeSet<Integer> temp1 = new TreeSet<>();
+            //add up all the costs for each element in the solution set
+            for (ElementSet i: _solnSets){
+                temp += i.getCost();       
+            }
+            return temp;
+        }
 	
 	/** Run the simple greedy heuristic -- add the next best set until either
 	 *  (1) The coverage level is reached, or 
 	 *  (2) There is no set that can increase the coverage.
 	 */
 	public void solve() {
-		
+		//ElementSet tempSet = new ElementSet();
 		// Reset the solver
 		reset();
-		
-		// TODO: Preliminary initializations
-
+                _modelCopy = new SCPModel(_model);
+                
+                //need to make a copy so I can iterate through the copy         
+                //System.out.println("This is model copy: "+_modelCopy.getSet());
+               // System.out.println("This is model: "+_model.getSet());
+               GreedySolver tempSolver = this;
+                _elementsUncovered = this._modelCopy.getElements();
+                _solnSets = new TreeSet<>();
+                
 		// Begin the greedy selection loop
 		long start = System.currentTimeMillis();
 		System.out.println("Running '" + getName() + "'...");
-
-		// TODO: Fill in the main loop, pseudocode given below
-		//
 		// while (set elements remaining not covered > max num that can be left uncovered
 		//        AND all sets have not been selected)
 		//
-		//      Call nextBestSet() to get the next best ElementSet to add (if there is one)
-		// 		Update solution and local members
-		
+                while (((1-_coverage)>(1- _alpha))&& _solnSets.size() < _model.getSet().size()) { //need to add in the count of the sets
+                    
+		//      Call nextBestSet() to get the next best ElementSet to add (if there is one)                   
+		// 		Update solution and local members  
+                ElementSet tempSet = tempSolver.nextBestSet();
+                if (tempSet != null)
+                _solnSets.add(tempSet);
+                if(tempSet == null)
+                    break;
+                //update elements uncovered by removing any that are in the temp set
+
+                for(Integer i : tempSet.getElements())
+                    if(_elementsUncovered.contains(i))
+                        _elementsUncovered.remove(i);
+                _coverage = this.computeCoverage();
+                _objFn = this.computeCost();
+                //System.out.println("objfun equals: "+ _objFn);
+                System.out.format("- Selected: " + tempSet);
+                }
+                
 		// Record final set coverage, compTime and print warning if applicable
-		_coverage = -1d; // TODO: Correct this, should be coverage of solution found
 		_compTime = System.currentTimeMillis() - start;
 		if (_coverage < _alpha)
 			System.out.format("\nWARNING: Impossible to reach %.2f%% coverage level.\n", 100*_alpha);

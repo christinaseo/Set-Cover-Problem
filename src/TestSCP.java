@@ -10,6 +10,8 @@ import solver.GreedyCoverageSolver;
 import solver.GreedySolver;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.TreeSet;
 
 /** Example testing class, identical to TestSCPSoln except for classes used.
  * 
@@ -19,11 +21,44 @@ import java.io.*;
 public class TestSCP {
 	
 	public static BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
-	
-	public static void main(String[] args) throws IOException {
+
+    /**
+     * FileNotFoundException
+     * @param args
+     * @throws java.io.IOException
+     */
+        	public static void main(String[] args) throws IOException {
 		
 		SCPModel model = new SCPModel();
-		
+	
+                //trying to write the parser
+               /* try{
+                cin = new BufferedReader(new FileReader("SCPInstances/SCP_M_100-600.txt"));
+                String strLine;
+                int count = 1;
+                 String throwaway = cin.readLine();
+                 int sets = Integer.parseInt(cin.readLine());
+                 for (int i = 0; i < sets; i++){
+                 ArrayList<String> array1 = new ArrayList<>();
+                 while (!((strLine = cin.readLine()).equals("0"))) {
+                     array1.add(strLine);                     
+                 }
+                 double cost = Double.parseDouble(array1.get(0));
+                 TreeSet<Integer> tempSet = new TreeSet<>();
+                 array1.remove(array1.get(0));
+                 for(String j : array1)
+                     tempSet.add(Integer.parseInt(j));
+                 List<Integer> list = new ArrayList<> (tempSet);
+                 model.addSetToCover(count,cost,list);
+                 count++;
+                 throwaway = cin.readLine();
+                 }
+                }
+                catch (Exception e) {
+                   System.err.format("Exception occurred trying to read");
+                }
+                */
+        	
 		// Create a weighted SCP with
 		//   Set 1: weight 3.0, elements { 1, 3, 5, 7, 9 }
 		//   Set 2: weight 2.0, elements { 1, 5, 9 }
@@ -37,7 +72,12 @@ public class TestSCP {
 		model.addSetToCover(3, 2.0, Arrays.asList(new Integer[] {5,7,9}));
 		model.addSetToCover(2, 2.0, Arrays.asList(new Integer[] {1,5,9}));
 		model.addSetToCover(1, 3.0, Arrays.asList(new Integer[] {1,3,5,7,9}));
-		
+                
+                //Test Cases
+                //model.addSetToCover(7, 2.0, Arrays.asList(new Integer[] {1,2,5,7,9}));
+                //model.addSetToCover(8, 1.0, Arrays.asList(new Integer[] {1,3,5,7,11})); // should change number of elements to 11
+		//model.addSetToCover(8, 1.0, Arrays.asList(new Integer[] {1,3,5,7})); // As compare to only compares the set ID, will not add a set with a duplicate set ID 
+               
 		GreedyCoverageSolver CoverageMethod = new GreedyCoverageSolver();
 		GreedyCostSolver CostMethod = new GreedyCostSolver();
 		ChvatalSolver ChvatalMethod = new ChvatalSolver();
@@ -103,4 +143,5 @@ public class TestSCP {
 		System.out.println("Overall winner: " + overall + "\n");
 	}
 	
+
 }

@@ -10,6 +10,8 @@ import soln.solver.GreedyCoverageSolver;
 import soln.solver.GreedySolver;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.TreeSet;
 
 /** Example testing class to show solution, identical to TestSCP except for classes used.
  * 
@@ -23,7 +25,7 @@ public class TestSCPSoln {
 	public static void main(String[] args) throws IOException {
 		
 		SCPModel model = new SCPModel();
-		
+                		
 		// Create a weighted SCP with
 		//   Set 1: weight 3.0, elements { 1, 3, 5, 7, 9 }
 		//   Set 2: weight 2.0, elements { 1, 5, 9 }
@@ -37,6 +39,9 @@ public class TestSCPSoln {
 		model.addSetToCover(3, 2.0, Arrays.asList(new Integer[] {5,7,9}));
 		model.addSetToCover(2, 2.0, Arrays.asList(new Integer[] {1,5,9}));
 		model.addSetToCover(1, 3.0, Arrays.asList(new Integer[] {1,3,5,7,9}));
+                
+                model.addSetToCover(7, 2.0, Arrays.asList(new Integer[] {1,2,5,7,9}));
+                model.addSetToCover(8, 1.0, Arrays.asList(new Integer[] {1,3,5,7,11}));
 		
 		GreedyCoverageSolver CoverageMethod = new GreedyCoverageSolver();
 		GreedyCostSolver CostMethod = new GreedyCostSolver();

@@ -1,8 +1,0 @@
-FailedTestCases:
-test16: files/SCP_L_1000-1200.txt
-This single test 16 took too long to run
-
-
-Your grade for this assignment: 7.5 out of 8.0
-If you think there is a grading mistake,
-Please consult the TA during office hours.
